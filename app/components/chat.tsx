@@ -702,6 +702,8 @@ function _Chat() {
   const config = useAppConfig();
   const fontSize = config.fontSize;
 
+  const slashOffsetRef = useRef(0);
+
   const [showExport, setShowExport] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -782,10 +784,13 @@ function _Chat() {
       setPromptHints([]);
     } else if (text.startsWith(ChatCommandPrefix)) {
       setPromptHints(chatCommands.search(text));
-    } else if (!config.disablePromptHint && n < SEARCH_TEXT_LIMIT) {
+    } else if (
+      !config.disablePromptHint &&
+      text.length < slashOffsetRef.current + SEARCH_TEXT_LIMIT
+    ) {
       // check if need to trigger auto completion
-      if (text.startsWith("/")) {
-        let searchText = text.slice(1);
+      if (text.slice(slashOffsetRef.current).startsWith("/")) {
+        let searchText = text.slice(slashOffsetRef.current + 1);
         onSearch(searchText);
       }
     }
@@ -823,7 +828,7 @@ function _Chat() {
         setUserInput("");
       } else {
         // or fill the prompt
-        setUserInput(prompt.content);
+        setUserInput(prompt.content + userInput.slice(0, slashOffsetRef.current));
       }
       inputRef.current?.focus();
     }, 30);
@@ -874,6 +879,8 @@ function _Chat() {
       setUserInput(localStorage.getItem(LAST_INPUT_KEY) ?? "");
       e.preventDefault();
       return;
+    } else if (e.key === "/") {
+      slashOffsetRef.current = userInput.length;
     }
     if (shouldSubmit(e) && promptHints.length === 0) {
       doSubmit(userInput);
