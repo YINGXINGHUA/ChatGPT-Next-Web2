@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 
 import styles from "./home.module.scss";
 
@@ -15,7 +15,7 @@ import DragIcon from "../icons/drag.svg";
 
 import Locale from "../locales";
 
-import { useAppConfig, useChatStore } from "../store";
+import { ModelType, useAppConfig, useChatStore } from "../store";
 
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -23,15 +23,20 @@ import {
   MIN_SIDEBAR_WIDTH,
   NARROW_SIDEBAR_WIDTH,
   Path,
+  PLUGINS,
   REPO_URL,
 } from "../constant";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "./ui-lib";
+import { Selector, showConfirm, showToast } from "./ui-lib";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
+  loading: () => null,
+});
+
+const SdPanel = dynamic(async () => (await import("./sd-panel")).SdPanel, {
   loading: () => null,
 });
 
@@ -140,9 +145,23 @@ export function SideBar(props: { className?: string }) {
     () => isIOS() && isMobileScreen,
     [isMobileScreen],
   );
+  const [showPluginSelector, setShowPluginSelector] = useState(false);
+  const location = useLocation();
 
   useHotKey();
 
+  let bodyComponent: React.JSX.Element;
+  let isChat: boolean = false;
+  switch (location.pathname) {
+    case Path.Sd:
+    case Path.SdPanel:
+      bodyComponent = <SdPanel />;
+      break;
+    default:
+      isChat = true;
+      bodyComponent = <ChatList narrow={shouldNarrow} />;
+  }
+  // @ts-ignore
   return (
     <div
       className={`${styles.sidebar} ${props.className} ${
@@ -183,7 +202,7 @@ export function SideBar(props: { className?: string }) {
           icon={<PluginIcon />}
           text={shouldNarrow ? undefined : Locale.Plugin.Name}
           className={styles["sidebar-bar-button"]}
-          onClick={() => showToast(Locale.WIP)}
+          onClick={() => setShowPluginSelector(true)}
           shadow
         />
       </div>
@@ -191,26 +210,28 @@ export function SideBar(props: { className?: string }) {
       <div
         className={styles["sidebar-body"]}
         onClick={(e) => {
-          if (e.target === e.currentTarget) {
+          if (isChat && e.target === e.currentTarget) {
             navigate(Path.Home);
           }
         }}
       >
-        <ChatList narrow={shouldNarrow} />
+        {bodyComponent}
       </div>
 
       <div className={styles["sidebar-tail"]}>
         <div className={styles["sidebar-actions"]}>
-          <div className={styles["sidebar-action"] + " " + styles.mobile}>
-            <IconButton
-              icon={<DeleteIcon />}
-              onClick={async () => {
-                if (await showConfirm(Locale.Home.DeleteChat)) {
-                  chatStore.deleteSession(chatStore.currentSessionIndex);
-                }
-              }}
-            />
-          </div>
+          {isChat && (
+            <div className={styles["sidebar-action"] + " " + styles.mobile}>
+              <IconButton
+                icon={<DeleteIcon />}
+                onClick={async () => {
+                  if (await showConfirm(Locale.Home.DeleteChat)) {
+                    chatStore.deleteSession(chatStore.currentSessionIndex);
+                  }
+                }}
+              />
+            </div>
+          )}
           <div className={styles["sidebar-action"]}>
             <Link to={Path.Settings}>
               <IconButton icon={<SettingsIcon />} shadow />
@@ -222,21 +243,23 @@ export function SideBar(props: { className?: string }) {
             </a>
           </div>
         </div>
-        <div>
-          <IconButton
-            icon={<AddIcon />}
-            text={shouldNarrow ? undefined : Locale.Home.NewChat}
-            onClick={() => {
-              if (config.dontShowMaskSplashScreen) {
-                chatStore.newSession();
-                navigate(Path.Chat);
-              } else {
-                navigate(Path.NewChat);
-              }
-            }}
-            shadow
-          />
-        </div>
+        {isChat && (
+          <div>
+            <IconButton
+              icon={<AddIcon />}
+              text={shouldNarrow ? undefined : Locale.Home.NewChat}
+              onClick={() => {
+                if (config.dontShowMaskSplashScreen) {
+                  chatStore.newSession();
+                  navigate(Path.Chat);
+                } else {
+                  navigate(Path.NewChat);
+                }
+              }}
+              shadow
+            />
+          </div>
+        )}
       </div>
 
       <div
@@ -245,6 +268,27 @@ export function SideBar(props: { className?: string }) {
       >
         <DragIcon />
       </div>
+      {showPluginSelector && (
+        <Selector
+          items={[
+            {
+              title: "👇 Please select the plugin you need to use",
+              value: "-",
+              disable: true,
+            },
+            ...PLUGINS.map((item) => {
+              return {
+                title: item.name,
+                value: item.path,
+              };
+            }),
+          ]}
+          onClose={() => setShowPluginSelector(false)}
+          onSelection={(s) => {
+            navigate(s[0], { state: { fromHome: true } });
+          }}
+        />
+      )}
     </div>
   );
 }

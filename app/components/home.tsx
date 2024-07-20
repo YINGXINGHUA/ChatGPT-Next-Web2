@@ -55,6 +55,14 @@ const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
   loading: () => <Loading noLogo />,
 });
 
+const Sd = dynamic(async () => (await import("./sd")).Sd, {
+  loading: () => <Loading noLogo />,
+});
+
+const SdPanel = dynamic(async () => (await import("./sd-panel")).SdPanel, {
+  loading: () => <Loading noLogo />,
+});
+
 export function useSwitchTheme() {
   const config = useAppConfig();
 
@@ -125,7 +133,8 @@ const loadAsyncGoogleFont = () => {
 function Screen() {
   const config = useAppConfig();
   const location = useLocation();
-  const isHome = location.pathname === Path.Home;
+  const isHome =
+    location.pathname === Path.Home || location.pathname === Path.SdPanel;
   const isAuth = location.pathname === Path.Auth;
   const isMobileScreen = useMobileScreen();
   const shouldTightBorder =
@@ -134,7 +143,6 @@ function Screen() {
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
-
   return (
     <div
       className={
@@ -151,13 +159,14 @@ function Screen() {
       ) : (
         <>
           <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-
           <div className={styles["window-content"]} id={SlotID.AppBody}>
             <Routes>
               <Route path={Path.Home} element={<Chat />} />
               <Route path={Path.NewChat} element={<NewChat />} />
               <Route path={Path.Masks} element={<MaskPage />} />
               <Route path={Path.Chat} element={<Chat />} />
+              <Route path={Path.Sd} element={<Sd />} />
+              <Route path={Path.SdPanel} element={<Sd />} />
               <Route path={Path.Settings} element={<Settings />} />
             </Routes>
           </div>

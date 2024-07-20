@@ -8,6 +8,8 @@ export const FETCH_COMMIT_URL = `https://api.github.com/repos/${OWNER}/${REPO}/c
 export const FETCH_TAG_URL = `https://api.github.com/repos/${OWNER}/${REPO}/tags?per_page=1`;
 export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
 
+export const STABILITY_BASE_URL = "https://api.stability.ai";
+
 export const DEFAULT_API_HOST = "https://api.nextchat.dev";
 export const OPENAI_BASE_URL = "https://api.openai.com";
 export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
@@ -31,6 +33,8 @@ export enum Path {
   NewChat = "/new-chat",
   Masks = "/masks",
   Auth = "/auth",
+  Sd = "/sd",
+  SdPanel = "/sd-panel",
 }
 
 export enum ApiPath {
@@ -55,6 +59,7 @@ export enum FileName {
 }
 
 export enum StoreKey {
+  File = "chat-next-web-file",
   Chat = "chat-next-web-store",
   Access = "access-control",
   Config = "app-config",
@@ -62,6 +67,7 @@ export enum StoreKey {
   Prompt = "prompt-store",
   Update = "chat-update",
   Sync = "sync",
+  SdList = "sd-list",
 }
 
 export const DEFAULT_SIDEBAR_WIDTH = 300;
@@ -81,6 +87,7 @@ export const REQUEST_TIMEOUT_MS = 60000;
 export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 
 export enum ServiceProvider {
+  Stability = "Stability",
   OpenAI = "OpenAI",
   Azure = "Azure",
   Google = "Google",
@@ -100,6 +107,7 @@ export enum GoogleSafetySettingsThreshold {
 }
 
 export enum ModelProvider {
+  Stability = "Stability",
   GPT = "GPT",
   GeminiPro = "GeminiPro",
   Claude = "Claude",
@@ -107,6 +115,10 @@ export enum ModelProvider {
   Doubao = "Doubao",
   Qwen = "Qwen",
 }
+
+export const StabilityPath = {
+  GeneratePath: "v2beta/stable-image/generate",
+};
 
 export const Anthropic = {
   ChatPath: "v1/messages",
@@ -354,3 +366,5 @@ export const internalAllowedWebDavEndpoints = [
   "https://webdav.yandex.com",
   "https://app.koofr.net/dav/Koofr",
 ];
+
+export const PLUGINS = [{ name: "Stable Diffusion", path: Path.Sd }];
