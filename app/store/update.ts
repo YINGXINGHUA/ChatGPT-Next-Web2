@@ -31,6 +31,7 @@ function formatVersionDate(t: string) {
 type VersionType = "date" | "tag";
 
 async function getVersion(type: VersionType) {
+  return 0;
   if (type === "date") {
     const data = (await (await fetch(FETCH_COMMIT_URL)).json()) as {
       commit: {
