@@ -1091,7 +1091,7 @@ export function Settings() {
           </ListItem>
 
           <ListItem
-            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
+            title={Locale.Settings.Update.Version(currentVersion ?? "Mini Max")}
             // subTitle={
             //   checkingUpdate
             //     ? Locale.Settings.Update.IsChecking
