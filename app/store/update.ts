@@ -31,7 +31,6 @@ function formatVersionDate(t: string) {
 type VersionType = "date" | "tag";
 
 async function getVersion(type: VersionType) {
-  return 0;
   if (type === "date") {
     const data = (await (await fetch(FETCH_COMMIT_URL)).json()) as {
       commit: {
@@ -71,6 +70,7 @@ export const useUpdateStore = createPersistStore(
     },
 
     async getLatestVersion(force = false) {
+      return;
       const versionType = get().versionType;
       let version =
         versionType === "date"
@@ -135,6 +135,7 @@ export const useUpdateStore = createPersistStore(
     },
 
     async updateUsage(force = false) {
+      return;
       // only support openai for now
       const overOneMinute = Date.now() - get().lastUpdateUsage >= ONE_MINUTE;
       if (!overOneMinute && !force) return;
