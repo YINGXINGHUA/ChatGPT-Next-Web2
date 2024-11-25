@@ -1,6 +1,6 @@
 
 <center>
-<h2>Chat-MiniMax-web (Chat-GPT-web)</h2>
+<h2>Chat-MiniMax-web (ChatGPT-Next-Web)</h2>
 <h3>这是一个停滞的版本,小幅度修改,适配minimax(海螺问问)</h3>
 
 <div>
