@@ -1,9 +1,7 @@
 <div align="center">
 <font>这是一个停滞的版本,小幅度修改,适配minimax(海螺问问)</font>
 </br>
-<a href='#企业版'>
-  <img src="./docs/images/ent.svg" alt="icon"/>
-</a>
+
 
 <h1 align="center">NextChat (ChatGPT Next Web)</h1>
 
