@@ -3,8 +3,6 @@
 <h2>Chat-MiniMax-web (Chat-GPT-web)</h2>
 <h3>这是一个停滞的版本,小幅度修改,适配minimax(海螺问问)</h3>
 
-
-
 <div>
 	<ul>
   		<li>用于解决minimax输出一半断开问题</li>
